@@ -115,7 +115,7 @@ function App() {
   // Show loader while checking login status
   if (checkingAuth) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-black text-white">
+      <div className="w-full h-screen flex items-center justify-center bg-[#1E2A44] text-white">
         Loading...
       </div>
     )
