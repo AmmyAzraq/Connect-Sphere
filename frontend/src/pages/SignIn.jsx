@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 
 // Import app logo image
-import logo from "../assets/c.png"
+import logo from "../assets/C.png"
 
 // Import written logo image
 import logo1 from "../assets/cswritten.png"
