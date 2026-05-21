@@ -45,7 +45,7 @@ const port = process.env.PORT || 5000
 
 // Enable CORS for frontend
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://connect-sphere-azraq.vercel.app",],
     credentials: true
 }))
 
