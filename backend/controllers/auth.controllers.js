@@ -11,49 +11,49 @@ import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 
 // Sign up controller
-export const signUp=async (req,res)=>{
+export const signUp = async (req, res) => {
     try {
 
         // Get user details from request body
-        const {name,email,password,userName}=req.body
+        const { name, email, password, userName } = req.body
 
         // Check if email already exists
-        const findByEmail=await User.findOne({email})
-        if(findByEmail){
-            return res.status(400).json({message:"Email already exist !"})
+        const findByEmail = await User.findOne({ email })
+        if (findByEmail) {
+            return res.status(400).json({ message: "Email already exist !" })
         }
 
         // Check if username already exists
-         const findByUserName=await User.findOne({userName})
-        if(findByUserName){
-            return res.status(400).json({message:"UserName already exist !"})
+        const findByUserName = await User.findOne({ userName })
+        if (findByUserName) {
+            return res.status(400).json({ message: "UserName already exist !" })
         }
 
         // Check password length
-        if(password.length<6){
-            return res.status(400).json({message:"password must be atleast 6 characters "})
+        if (password.length < 6) {
+            return res.status(400).json({ message: "password must be atleast 6 characters " })
         }
 
         // Hash password before saving
-        const hashedPassword=await bcrypt.hash(password,10)
+        const hashedPassword = await bcrypt.hash(password, 10)
 
         // Create new user
-        const user=await User.create({
+        const user = await User.create({
             name,
             userName,
             email,
-            password:hashedPassword
+            password: hashedPassword
         })
 
         // Generate token for user
-        const token=await genToken(user._id)
+        const token = await genToken(user._id)
 
         // Store token in cookie
-        res.cookie("token",token,{
-            httpOnly:true,
-            maxAge:10*365*24*60*60*1000,
-            secure:false,
-            sameSite:"Strict"
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
+            secure: true,
+            sameSite: "none"
         })
 
         // Send created user response
@@ -62,39 +62,39 @@ export const signUp=async (req,res)=>{
     } catch (error) {
 
         // Handle signup error
-        return res.status(500).json({message:`signup error ${error}`})
+        return res.status(500).json({ message: `signup error ${error}` })
     }
 }
 
 // Sign in controller
-export const signIn=async (req,res)=>{
+export const signIn = async (req, res) => {
     try {
 
         // Get login details from request body
-        const {password,userName}=req.body
-       
+        const { password, userName } = req.body
+
         // Find user by username
-         const user=await User.findOne({userName})
-        if(!user){
-            return res.status(400).json({message:"User not found !"})
+        const user = await User.findOne({ userName })
+        if (!user) {
+            return res.status(400).json({ message: "User not found !" })
         }
 
         // Compare entered password with saved hashed password
-     const isMatch=await bcrypt.compare(password,user.password)
+        const isMatch = await bcrypt.compare(password, user.password)
 
-       if(!isMatch){
-         return res.status(400).json({message:"Incorrect Password !"})
-       }
+        if (!isMatch) {
+            return res.status(400).json({ message: "Incorrect Password !" })
+        }
 
         // Generate token after successful login
-        const token=await genToken(user._id)
+        const token = await genToken(user._id)
 
         // Store token in cookie
-        res.cookie("token",token,{
-            httpOnly:true,
-            maxAge:10*365*24*60*60*1000,
-            secure:false,
-            sameSite:"Strict"
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
+            secure: true,
+            sameSite: "none"
         })
 
         // Send logged in user response
@@ -103,139 +103,143 @@ export const signIn=async (req,res)=>{
     } catch (error) {
 
         // Handle signin error
-        return res.status(500).json({message:`signin error ${error}`})
+        return res.status(500).json({ message: `signin error ${error}` })
     }
 }
 
 
 // Sign out controller
-export const signOut=async (req,res)=>{
+export const signOut = async (req, res) => {
     try {
 
         // Clear token cookie
-        res.clearCookie("token")
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        })
 
         // Send success response
-        return res.status(200).json({message:"sign out successfully"})
+        return res.status(200).json({ message: "sign out successfully" })
 
     } catch (error) {
 
         // Handle signout error
-        return res.status(500).json({message:`signout error ${error}`})
+        return res.status(500).json({ message: `signout error ${error}` })
     }
 }
 
 // Send OTP controller
-export const sendOtp=async (req,res)=>{
+export const sendOtp = async (req, res) => {
     try {
 
         // Get email from request body
-        const {email}=req.body
+        const { email } = req.body
 
         // Find user by email
-        const user =await User.findOne({email})
-        if(!user){
-            return res.status(400).json({message:"User not found"})
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({ message: "User not found" })
         }
 
         // Generate 4 digit OTP
-        const otp=Math.floor(1000 + Math.random() * 9000).toString()
+        const otp = Math.floor(1000 + Math.random() * 9000).toString()
 
         // Save OTP in user document
-        user.resetOtp=otp,
+        user.resetOtp = otp,
 
-        // Set OTP expiry time for 5 minutes
-        user.otpExpires=Date.now() + 5*60*1000
+            // Set OTP expiry time for 5 minutes
+            user.otpExpires = Date.now() + 5 * 60 * 1000
 
         // Mark OTP as not verified
-        user.isOtpVerified=false
+        user.isOtpVerified = false
 
-       // Save user with OTP details
-       await user.save()
+        // Save user with OTP details
+        await user.save()
 
-       // Send OTP email
-       await sendMail(email,otp)
+        // Send OTP email
+        await sendMail(email, otp)
 
-       // Send success response
-       return res.status(200).json({message:"email successfully send"})
+        // Send success response
+        return res.status(200).json({ message: "email successfully send" })
 
     } catch (error) {
 
-         // Handle send OTP error
-         return res.status(500).json({message:`send otp error ${error}`})
+        // Handle send OTP error
+        return res.status(500).json({ message: `send otp error ${error}` })
     }
 }
 
 
 // Verify OTP controller
-export const verifyOtp=async (req,res)=>{
+export const verifyOtp = async (req, res) => {
     try {
 
-       // Get email and OTP from request body
-       const {email,otp}=req.body
+        // Get email and OTP from request body
+        const { email, otp } = req.body
 
-     // Find user by email
-     const user =await User.findOne({email})
+        // Find user by email
+        const user = await User.findOne({ email })
 
-     // Check if OTP is invalid or expired
-     if(!user || user.resetOtp!==otp || user.otpExpires < Date.now() ){
-        return res.status(400).json({message:"invalid/expired otp"})
-     }
+        // Check if OTP is invalid or expired
+        if (!user || user.resetOtp !== otp || user.otpExpires < Date.now()) {
+            return res.status(400).json({ message: "invalid/expired otp" })
+        }
 
-     // Mark OTP as verified
-     user.isOtpVerified=true
+        // Mark OTP as verified
+        user.isOtpVerified = true
 
-     // Remove OTP after verification
-     user.resetOtp=undefined
+        // Remove OTP after verification
+        user.resetOtp = undefined
 
-     // Remove OTP expiry after verification
-     user.otpExpires=undefined
+        // Remove OTP expiry after verification
+        user.otpExpires = undefined
 
-// Save updated user
-await user.save()
+        // Save updated user
+        await user.save()
 
-// Send success response
-return res.status(200).json({message:"otp verified"})
+        // Send success response
+        return res.status(200).json({ message: "otp verified" })
     } catch (error) {
 
-         // Handle verify OTP error
-         return res.status(500).json({message:`verify otp error ${error}`})
+        // Handle verify OTP error
+        return res.status(500).json({ message: `verify otp error ${error}` })
     }
 }
 
 // Reset password controller
-export const resetPassword=async (req,res)=>{
+export const resetPassword = async (req, res) => {
     try {
 
         // Get email and new password from request body
-        const {email,password}=req.body
+        const { email, password } = req.body
 
         // Find user by email
-        const user =await User.findOne({email})
+        const user = await User.findOne({ email })
 
         // Check if user exists and OTP is verified
-        if(!user || !user.isOtpVerified){
-            return res.status(400).json({message:"otp verfication required"})
+        if (!user || !user.isOtpVerified) {
+            return res.status(400).json({ message: "otp verfication required" })
         }
 
         // Hash new password
-        const hashedPassword=await bcrypt.hash(password,10)
+        const hashedPassword = await bcrypt.hash(password, 10)
 
         // Update user password
-        user.password=hashedPassword
+        user.password = hashedPassword
 
         // Reset OTP verification status
-        user.isOtpVerified=false
+        user.isOtpVerified = false
 
-// Save updated user
-await user.save()
+        // Save updated user
+        await user.save()
 
-// Send success response
-return res.status(200).json({message:"password reset successfully"})
+        // Send success response
+        return res.status(200).json({ message: "password reset successfully" })
 
     } catch (error) {
 
-         // Handle reset password error
-         return res.status(500).json({message:`reset otp error ${error}`})
+        // Handle reset password error
+        return res.status(500).json({ message: `reset otp error ${error}` })
     }
 }

@@ -24,7 +24,11 @@ export const deleteAccount = async (req, res) => {
         await User.findByIdAndDelete(userId)
 
         // Logout cookie remove
-        res.clearCookie("token")
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        })
 
         // Success response
         return res.status(200).json({
