@@ -311,10 +311,17 @@ function LoopCard({ loop }) {
             )}
 
             {/* Delete confirmation popup */}
+            {/* Delete confirmation popup */}
             {showDeleteBox && (
-                <div className='fixed inset-0 bg-black/60 flex justify-center items-center z-[500]'>
+                <div
+                    className='fixed inset-0 bg-black/60 flex justify-center items-center z-[500]'
+                    onClick={() => setShowDeleteBox(false)}
+                >
 
-                    <div className='w-[90%] max-w-[350px] bg-white rounded-2xl p-5 text-center'>
+                    <div
+                        className='w-[90%] max-w-[350px] bg-white rounded-2xl p-5 text-center'
+                        onClick={(e) => e.stopPropagation()}
+                    >
 
                         <h2 className='text-[20px] font-semibold mb-3'>
                             Delete Reel?
