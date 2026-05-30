@@ -42,3 +42,4 @@ const uploadOnCloudinary = async (file) => {
 
 // Export function
 export default uploadOnCloudinary
+

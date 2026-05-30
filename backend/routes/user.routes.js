@@ -10,7 +10,6 @@ import { editProfile, follow, followingList, getAllNotifications, getCurrentUser
 // Import multer upload middleware
 import { upload } from "../middlewares/multer.js"
 
-
 // Create express router
 const userRouter=express.Router()
 

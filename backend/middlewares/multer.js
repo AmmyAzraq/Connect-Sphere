@@ -17,3 +17,4 @@ const storage=multer.diskStorage({
 
 // Create multer upload middleware using storage configuration
 export const upload=multer({storage})
+

@@ -132,12 +132,14 @@ export const signOut = async (req, res) => {
 // Send OTP controller
 export const sendOtp = async (req, res) => {
     try {
-
+        console.log("SEND OTP ROUTE HIT");
         // Get email from request body
         const { email } = req.body
+        console.log("Email received:", email);
 
         // Find user by email
         const user = await User.findOne({ email })
+        console.log("User found:", !!user);
         if (!user) {
             return res.status(400).json({ message: "User not found" })
         }
@@ -146,27 +148,31 @@ export const sendOtp = async (req, res) => {
         const otp = Math.floor(1000 + Math.random() * 9000).toString()
 
         // Save OTP in user document
-        user.resetOtp = otp,
+        user.resetOtp = otp;
 
-            // Set OTP expiry time for 5 minutes
-            user.otpExpires = Date.now() + 5 * 60 * 1000
+        // Set OTP expiry time for 5 minutes
+        user.otpExpires = Date.now() + 5 * 60 * 1000
 
         // Mark OTP as not verified
         user.isOtpVerified = false
 
         // Save user with OTP details
         await user.save()
+        console.log("OTP saved in DB");
 
         // Send OTP email
         await sendMail(email, otp)
+        console.log("OTP email sent");
 
         // Send success response
         return res.status(200).json({ message: "email successfully send" })
 
     } catch (error) {
+        console.log("SEND OTP ERROR:", error);
 
-        // Handle send OTP error
-        return res.status(500).json({ message: `send otp error ${error}` })
+        return res.status(500).json({
+            message: error.message
+        });
     }
 }
 

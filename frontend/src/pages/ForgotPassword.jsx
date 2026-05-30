@@ -9,7 +9,7 @@ import { ClipLoader } from 'react-spinners'
 
 // Import backend server URL
 import { serverUrl } from '../App'
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function ForgotPassword() {
 
@@ -79,7 +79,7 @@ function ForgotPassword() {
             setLoading(false)
 
             // Show backend error message
-            setErr(error.response.data.message)
+            setErr(error.response?.data?.message || error.message || "Something went wrong")
         }
     }
 
@@ -119,7 +119,7 @@ function ForgotPassword() {
             setLoading(false)
 
             // Show backend error message
-            setErr(error.response.data.message)
+            setErr(error.response?.data?.message || error.message || "Something went wrong")
         }
     }
 
@@ -137,8 +137,6 @@ function ForgotPassword() {
         // Start loading
         setLoading(true)
 
-        // moving to sign in page again
-        navigate("/signin")
 
         try {
 
@@ -151,6 +149,9 @@ function ForgotPassword() {
                 },
                 { withCredentials: true }
             )
+            // moving to sign in page again
+            navigate("/signin")
+
 
             // Print response in console
             console.log(result.data)
@@ -167,188 +168,188 @@ function ForgotPassword() {
             setLoading(false)
 
             // Show backend error message
-            setErr(error.response.data.message)
+            setErr(error.response?.data?.message || error.message || "Something went wrong")
         }
     }
 
     return (
 
-       // Main container
-<div className='w-full h-screen bg-[#1E2A44] flex flex-col justify-center items-center'>
+        // Main container
+        <div className='w-full h-screen bg-[#1E2A44] flex flex-col justify-center items-center'>
 
-    {/* STEP 1 UI → Enter Email */}
-    {step == 1 &&
+            {/* STEP 1 UI → Enter Email */}
+            {step == 1 &&
 
-        <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
+                <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
 
-            {/* Heading */}
-            <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
-                Forgot Password
-            </h2>
+                    {/* Heading */}
+                    <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
+                        Forgot Password
+                    </h2>
 
-            {/* Email input container */}
-            <div
-                className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
-                onClick={() => setInputClicked({ ...inputClicked, email: true })}
-            >
+                    {/* Email input container */}
+                    <div
+                        className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
+                        onClick={() => setInputClicked({ ...inputClicked, email: true })}
+                    >
 
-                {/* Floating label */}
-                <label
-                    htmlFor='email'
-                    className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.email ? "top-[-15px]" : ""}`}
-                >
-                    Enter Email
-                </label>
+                        {/* Floating label */}
+                        <label
+                            htmlFor='email'
+                            className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.email ? "top-[-15px]" : ""}`}
+                        >
+                            Enter Email
+                        </label>
 
-                {/* Email input */}
-                <input
-                    type="email"
-                    id='email'
-                    className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
-                    required
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                />
-            </div>
+                        {/* Email input */}
+                        <input
+                            type="email"
+                            id='email'
+                            className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
+                            required
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                        />
+                    </div>
 
-            {/* Error message */}
-            {err && <p className='text-red-500'>{err}</p>}
+                    {/* Error message */}
+                    {err && <p className='text-red-500'>{err}</p>}
 
-            {/* Send OTP button */}
-            <button
-                className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
-                disabled={loading}
-                onClick={handleStep1}
-            >
-                {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Send OTP"}
-            </button>
+                    {/* Send OTP button */}
+                    <button
+                        className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
+                        disabled={loading}
+                        onClick={handleStep1}
+                    >
+                        {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Send OTP"}
+                    </button>
+                </div>
+            }
+
+            {/* STEP 2 UI → Verify OTP */}
+            {step == 2 &&
+
+                <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
+
+                    {/* Heading */}
+                    <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
+                        Forgot Password
+                    </h2>
+
+                    {/* OTP input container */}
+                    <div
+                        className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
+                        onClick={() => setInputClicked({ ...inputClicked, otp: true })}
+                    >
+
+                        {/* Floating label */}
+                        <label
+                            htmlFor='otp'
+                            className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.otp ? "top-[-15px]" : ""}`}
+                        >
+                            Enter OTP
+                        </label>
+
+                        {/* OTP input */}
+                        <input
+                            type="text"
+                            id='otp'
+                            className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
+                            required
+                            onChange={(e) => setOtp(e.target.value)}
+                            value={otp}
+                        />
+                    </div>
+
+                    {/* Error message */}
+                    {err && <p className='text-red-500'>{err}</p>}
+
+                    {/* Submit OTP button */}
+                    <button
+                        className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
+                        disabled={loading}
+                        onClick={handleStep2}
+                    >
+                        {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Submit"}
+                    </button>
+                </div>
+            }
+
+            {/* STEP 3 UI → Reset Password */}
+            {step == 3 &&
+
+                <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
+
+                    {/* Heading */}
+                    <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
+                        Reset Password
+                    </h2>
+
+                    {/* New password input container */}
+                    <div
+                        className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
+                        onClick={() => setInputClicked({ ...inputClicked, newPassword: true })}
+                    >
+
+                        {/* Floating label */}
+                        <label
+                            htmlFor='newPassword'
+                            className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.newPassword ? "top-[-15px]" : ""}`}
+                        >
+                            Enter New Password
+                        </label>
+
+                        {/* New password input */}
+                        <input
+                            type="text"
+                            id='newPassword'
+                            className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
+                            required
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            value={newPassword}
+                        />
+                    </div>
+
+                    {/* Confirm password input container */}
+                    <div
+                        className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
+                        onClick={() => setInputClicked({ ...inputClicked, confirmNewPassword: true })}
+                    >
+
+                        {/* Floating label */}
+                        <label
+                            htmlFor='confirmNewPassword'
+                            className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.confirmNewPassword ? "top-[-15px]" : ""}`}
+                        >
+                            Confirm New Password
+                        </label>
+
+                        {/* Confirm password input */}
+                        <input
+                            type="text"
+                            id='confirmNewPassword'
+                            className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
+                            required
+                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                            value={confirmNewPassword}
+                        />
+                    </div>
+
+                    {/* Error message */}
+                    {err && <p className='text-red-500'>{err}</p>}
+
+                    {/* Reset password button */}
+                    <button
+                        className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
+                        disabled={loading}
+                        onClick={handleStep3}
+                    >
+                        {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Reset Password"}
+                    </button>
+                </div>
+            }
+
         </div>
-    }
-
-    {/* STEP 2 UI → Verify OTP */}
-    {step == 2 &&
-
-        <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
-
-            {/* Heading */}
-            <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
-                Forgot Password
-            </h2>
-
-            {/* OTP input container */}
-            <div
-                className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
-                onClick={() => setInputClicked({ ...inputClicked, otp: true })}
-            >
-
-                {/* Floating label */}
-                <label
-                    htmlFor='otp'
-                    className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.otp ? "top-[-15px]" : ""}`}
-                >
-                    Enter OTP
-                </label>
-
-                {/* OTP input */}
-                <input
-                    type="text"
-                    id='otp'
-                    className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
-                    required
-                    onChange={(e) => setOtp(e.target.value)}
-                    value={otp}
-                />
-            </div>
-
-            {/* Error message */}
-            {err && <p className='text-red-500'>{err}</p>}
-
-            {/* Submit OTP button */}
-            <button
-                className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
-                disabled={loading}
-                onClick={handleStep2}
-            >
-                {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Submit"}
-            </button>
-        </div>
-    }
-
-    {/* STEP 3 UI → Reset Password */}
-    {step == 3 &&
-
-        <div className='w-[90%] max-w-[500px] h-[500px] bg-[#F8F8F6] rounded-2xl flex justify-center items-center flex-col border border-[#B7BDC6]'>
-
-            {/* Heading */}
-            <h2 className='text-[30px] font-semibold text-[#1E2A44]'>
-                Reset Password
-            </h2>
-
-            {/* New password input container */}
-            <div
-                className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
-                onClick={() => setInputClicked({ ...inputClicked, newPassword: true })}
-            >
-
-                {/* Floating label */}
-                <label
-                    htmlFor='newPassword'
-                    className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.newPassword ? "top-[-15px]" : ""}`}
-                >
-                    Enter New Password
-                </label>
-
-                {/* New password input */}
-                <input
-                    type="text"
-                    id='newPassword'
-                    className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
-                    required
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    value={newPassword}
-                />
-            </div>
-
-            {/* Confirm password input container */}
-            <div
-                className='relative flex items-center mt-[30px] justify-start w-[90%] h-[50px] rounded-2xl border-2 border-[#B7BDC6] bg-[#F8F8F6]'
-                onClick={() => setInputClicked({ ...inputClicked, confirmNewPassword: true })}
-            >
-
-                {/* Floating label */}
-                <label
-                    htmlFor='confirmNewPassword'
-                    className={`text-[#1E2A44] absolute left-[20px] p-[5px] bg-[#F8F8F6] text-[15px] ${inputClicked.confirmNewPassword ? "top-[-15px]" : ""}`}
-                >
-                    Confirm New Password
-                </label>
-
-                {/* Confirm password input */}
-                <input
-                    type="text"
-                    id='confirmNewPassword'
-                    className='w-[100%] h-[100%] rounded-2xl px-[20px] outline-none border-0 bg-transparent text-[#1E2A44]'
-                    required
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    value={confirmNewPassword}
-                />
-            </div>
-
-            {/* Error message */}
-            {err && <p className='text-red-500'>{err}</p>}
-
-            {/* Reset password button */}
-            <button
-                className='w-[70%] px-[20px] py-[10px] bg-[#1E2A44] text-[#F8F8F6] font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]'
-                disabled={loading}
-                onClick={handleStep3}
-            >
-                {loading ? <ClipLoader size={30} color='#F8F8F6' /> : "Reset Password"}
-            </button>
-        </div>
-    }
-
-</div>
     )
 }
 

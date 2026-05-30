@@ -41,6 +41,7 @@ import { setNotificationData } from './redux/userSlice'
 
 // Backend server URL
 export const serverUrl = "https://connect-sphere-backend-ooz3.onrender.com"
+// export const serverUrl = "http://localhost:8000"
 
 function App() {
   const dispatch = useDispatch()

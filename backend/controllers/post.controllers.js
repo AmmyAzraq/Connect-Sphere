@@ -120,20 +120,20 @@ export const like = async (req, res) => {
                     receiver: post.author._id,
                     type: "like",
                     post: post._id,
-                    message:"liked your post"
+                    message: "liked your post"
                 })
 
                 // Populate notification details
                 const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
 
                 // Get receiver socket id
-                const receiverSocketId=getSocketId(post.author._id)
+                const receiverSocketId = getSocketId(post.author._id)
 
                 // Send real-time notification if receiver is online
-                if(receiverSocketId){
-                    io.to(receiverSocketId).emit("newNotification",populatedNotification)
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newNotification", populatedNotification)
                 }
-            
+
             }
         }
 
@@ -184,30 +184,30 @@ export const comment = async (req, res) => {
             message
         })
 
-         // Send notification if user comments on someone else's post
-         if (post.author._id != req.userId) {
+        // Send notification if user comments on someone else's post
+        if (post.author._id != req.userId) {
 
-                // Create comment notification
-                const notification = await Notification.create({
-                    sender: req.userId,
-                    receiver: post.author._id,
-                    type: "comment",
-                    post: post._id,
-                    message:"commented on your post"
-                })
+            // Create comment notification
+            const notification = await Notification.create({
+                sender: req.userId,
+                receiver: post.author._id,
+                type: "comment",
+                post: post._id,
+                message: "commented on your post"
+            })
 
-                // Populate notification details
-                const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
+            // Populate notification details
+            const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
 
-                // Get receiver socket id
-                const receiverSocketId=getSocketId(post.author._id)
+            // Get receiver socket id
+            const receiverSocketId = getSocketId(post.author._id)
 
-                // Send real-time notification if receiver is online
-                if(receiverSocketId){
-                    io.to(receiverSocketId).emit("newNotification",populatedNotification)
-                }
-            
+            // Send real-time notification if receiver is online
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("newNotification", populatedNotification)
             }
+
+        }
 
         // Save updated post
         await post.save()
@@ -215,8 +215,8 @@ export const comment = async (req, res) => {
         // Populate author details
         await post.populate("author", "name userName profileImage"),
 
-        // Populate comment author details
-        await post.populate("comments.author")
+            // Populate comment author details
+            await post.populate("comments.author")
 
         // Emit updated comments to all users
         io.emit("commentedPost", {
