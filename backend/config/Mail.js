@@ -1,64 +1,52 @@
 // Import nodemailer package
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 
 // Import dotenv package
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-// Load environment variables from .env file
-dotenv.config()
-console.log("EMAIL:", process.env.EMAIL)
-console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS)
+// Load environment variables
+dotenv.config();
 
-// Create transporter for sending emails
+console.log("SMTP_HOST:", process.env.SMTP_HOST);
+console.log("SMTP_PORT:", process.env.SMTP_PORT);
+console.log("SMTP_USER exists:", !!process.env.SMTP_USER);
+console.log("SMTP_PASS exists:", !!process.env.SMTP_PASS);
+console.log("EMAIL:", process.env.EMAIL);
+
+// Create Brevo SMTP transporter
 const transporter = nodemailer.createTransport({
-
-  // Use Gmail service
-  host: "smtp.gmail.com",
-
-  // Secure SMTP port
-  port: 587,
-
-  // true because port 465 uses SSL
+  host: process.env.SMTP_HOST, // smtp-relay.brevo.com
+  port: Number(process.env.SMTP_PORT), // 587
   secure: false,
-
-  // Authentication details
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASS,
-    
+    user: process.env.SMTP_USER, // Brevo SMTP login
+    pass: process.env.SMTP_PASS, // Brevo SMTP key
   },
-  
 });
 
+// Verify SMTP connection
 transporter.verify((error, success) => {
   if (error) {
-    console.log("SMTP Error:", error)
+    console.log("SMTP Error:", error);
   } else {
-    console.log("SMTP Ready")
+    console.log("SMTP Ready");
   }
-})
+});
 
 // Function to send OTP email
 const sendMail = async (to, otp) => {
   console.log("Reached sendMail");
-  // Send email
-  const info=await transporter.sendMail({
 
-    // Sender email
-    from: `${process.env.EMAIL}`,
-
-    // Receiver email
+  const info = await transporter.sendMail({
+    from: process.env.EMAIL,
     to,
-
-    // Email subject
     subject: "Reset Your Password",
+    html: `<p>Your OTP for password reset is <b>${otp}</b>. It expires in 5 minutes.</p>`,
+  });
 
-    // HTML email content
-    html: `<p>Your OTP for password reset is <b>${otp}</b>. It expires in 5 minutes.</p>`
-  })
-    console.log("Message ID:", info.messageId);
-  console.log("OTP Mail Sent Successfully")
-}
+  console.log("Message ID:", info.messageId);
+  console.log("OTP Mail Sent Successfully");
+};
 
 // Export sendMail function
-export default sendMail
+export default sendMail;
