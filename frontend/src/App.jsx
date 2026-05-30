@@ -40,8 +40,10 @@ import { setOnlineUsers, setSocket } from './redux/socketSlice'
 import { setNotificationData } from './redux/userSlice'
 
 // Backend server URL
-export const serverUrl = "https://connect-sphere-backend-ooz3.onrender.com"
-// export const serverUrl = "http://localhost:8000"
+export const serverUrl =
+  window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://connect-sphere-backend-ooz3.onrender.com";
 
 function App() {
   const dispatch = useDispatch()

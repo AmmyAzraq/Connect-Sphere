@@ -1,29 +1,64 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+// Import nodemailer package
+import nodemailer from "nodemailer"
 
-dotenv.config();
+// Import dotenv package
+import dotenv from "dotenv"
 
+// Load environment variables from .env file
+dotenv.config()
+console.log("EMAIL:", process.env.EMAIL)
+console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS)
+
+// Create transporter for sending emails
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
+
+  // Use Gmail service
+  host: "smtp.gmail.com",
+
+  // Secure SMTP port
+  port: 587,
+
+  // true because port 465 uses SSL
   secure: false,
+
+  // Authentication details
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASS,
+    
   },
+  
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP Error:", error)
+  } else {
+    console.log("SMTP Ready")
+  }
+})
+
+// Function to send OTP email
 const sendMail = async (to, otp) => {
   console.log("Reached sendMail");
+  // Send email
+  const info=await transporter.sendMail({
 
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL,
+    // Sender email
+    from: `${process.env.EMAIL}`,
+
+    // Receiver email
     to,
+
+    // Email subject
     subject: "Reset Your Password",
-    html: `<p>Your OTP for password reset is <b>${otp}</b>. It expires in 5 minutes.</p>`,
-  });
 
-  console.log("OTP Mail Sent Successfully:", info.messageId);
-};
+    // HTML email content
+    html: `<p>Your OTP for password reset is <b>${otp}</b>. It expires in 5 minutes.</p>`
+  })
+    console.log("Message ID:", info.messageId);
+  console.log("OTP Mail Sent Successfully")
+}
 
-export default sendMail;
+// Export sendMail function
+export default sendMail
